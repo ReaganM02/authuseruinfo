@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import userModel from '~~/server/models/user.model'
 
 export default defineNuxtPlugin( async () => {
 
@@ -7,8 +6,11 @@ export default defineNuxtPlugin( async () => {
 	const config = useRuntimeConfig()
 	try {
 		const { id } = jwt.verify( cookie.value, config.JWT_SECRET )
-		const user = await userModel.findById( { _id: id } )
-		useState( 'useUser', () => user )
+		const data = await $fetch( '/api/auth/me', {
+			method: 'POST',
+			body: { id }
+		} )
+		useState( 'useUser', () => data )
 	} catch ( error ) {
 
 	}
